@@ -1,9 +1,9 @@
 From Coq Require Import Bool Setoid List NArith.
 From Coq Require ListSet.
-From Coq Require Import FSets.FSetAVL Structures.OrdersEx Structures.OrderedTypeEx FSetFacts.
+From Coq Require Import FSets.FSetAVL FSetFacts.
 From Coq Require String.
 
-Require Import ListSet2.
+Require Import ListSet2 StringCmp.
 
 (** A finite set class.
     These axioms require convertibility to lists.
@@ -151,7 +151,7 @@ Definition lists_as_sets {M: Type} (E: forall x y: M, {x = y} + {x <> y})
 
 (* A set of strings based on FSetAVL. *)
 
-Module StringAVLSet := FSetAVL.Make String_as_OT.
+Module StringAVLSet := FSetAVL.Make StringLexicalOrder.
 Definition string_avl_set := StringAVLSet.t.
 
 Lemma ina_in {A} (l: list A) (x: A):

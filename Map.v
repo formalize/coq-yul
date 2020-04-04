@@ -1,5 +1,7 @@
 From Coq Require Import String.
-From Coq Require Import FSets.FMapAVL Structures.OrdersEx Structures.OrderedTypeEx FSets.FMapFacts.
+From Coq Require Import FSets.FMapAVL FSets.FMapFacts.
+
+Require Import StringCmp.
 
 Fixpoint alist_lookup {Key Value: Type} (KeyEqDec: forall x y: Key, {x = y} + {x <> y})
                        (a: list (Key * Value)) (query: Key)
@@ -61,7 +63,7 @@ Class class {Key: Type} (KeyEqDec: forall x y: Key, {x = y} + {x <> y})
     end;
 }.
 
-Module StringAVLMap := FMapAVL.Make String_as_OT.
+Module StringAVLMap := FMapAVL.Make StringLexicalOrder.
 Definition string_avl_map := StringAVLMap.t.
 
 Lemma string_avl_map_is_empty_ok {Value: Type} (map: StringAVLMap.t Value):
@@ -311,7 +313,7 @@ Definition string_avl_map_impl (Value: Type): class string_dec Value (string_avl
    |}.
 
 (**********************************************************************************************)
-(*
+
 Section MapFacts.
 
 Context {Key: Type} {KeyEqDec: forall x y: Key, {x = y} + {x <> y}}
@@ -319,5 +321,23 @@ Context {Key: Type} {KeyEqDec: forall x y: Key, {x = y} + {x <> y}}
          {M: Type}
          (MapImpl: class KeyEqDec Value M).
 
+Lemma empty_lookup (query: Key):
+  lookup empty query = None.
+Proof.
+apply is_empty_ok.
+apply empty_ok.
+Qed.
 
-End MapFacts. *)
+Definition of_alist (l: list (Key * Value))
+: M
+:= fold_right (fun (p: Key * Value) m => let (k, v) := p in insert m k v) empty l.
+
+Lemma of_alist_ok (l: list (Key * Value)) (query: Key):
+  lookup (of_alist l) query = alist_lookup KeyEqDec l query.
+Proof.
+induction l. { cbn. now apply empty_lookup. }
+cbn. destruct a as (k, v). rewrite insert_ok.
+destruct (KeyEqDec k query); destruct (KeyEqDec query k); try contradiction; subst; easy.
+Qed.
+
+End MapFacts.
