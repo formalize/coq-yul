@@ -1,4 +1,4 @@
-From Coq Require Import NArith.
+From Coq Require Import NArith Eqdep_dec.
 Require FSet Tower Dict.
 
 Record gas_schedule := {
@@ -95,6 +95,21 @@ Qed.
 Next Obligation.
 destruct x as (t', x).
 destruct y as (t, y).
-cbn in *. subst. cbn in *. clear Heq_anonymous.
-firstorder.
+intro E.
+cbn in *.
+assert (P := projT2_eq E). cbn in P. unfold projT1_eq in P. unfold f_equal in P.
+subst t'. cbn in *.
+assert (G: forall Q: t = projT1 (existT (fun t : yc_type => yc_value t) t y),
+             eq_rect t (fun a : yc_type => yc_value a) x t Q <> y).
+{
+  intro Q. cbn in Q.
+  assert (K: Q = eq_refl).
+  {
+    apply eq_proofs_unicity.
+    intros a b.
+    destruct (yc_type_eq_dec a b). { now left. } { now right. }
+  }
+  now subst Q.
+}
+now apply G in P.
 Qed.
