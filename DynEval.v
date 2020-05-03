@@ -97,6 +97,7 @@ Fixpoint eval_stmt {C: yul_config} {D: dynamic_eval_config}
        (nesting_level: N)
        (s: stmt)
        (fuel: nat)
+{struct fuel}
 : stmt_eval_result
 := match fuel with
    | O => StmtEvalResult glob loc (ModeAbort yc_out_of_gas)
@@ -215,6 +216,7 @@ with eval_block {C: yul_config} {D: dynamic_eval_config}
                 (nesting_level: N)
                 (block: block)
                 (fuel: nat)
+{struct fuel}
 : stmt_eval_result
 := match fuel with
    | O => StmtEvalResult glob loc (ModeAbort yc_out_of_gas)
@@ -244,6 +246,7 @@ with eval_stmt_list {C: yul_config} {D: dynamic_eval_config}
                     (nesting_level: N)
                     (stmts: list stmt)
                     (fuel: nat)
+{struct fuel}
 : stmt_eval_result
 := match fuel with
    | O => StmtEvalResult glob loc (ModeAbort yc_out_of_gas)
@@ -264,6 +267,7 @@ with eval_expr {C: yul_config} {D: dynamic_eval_config}
                (loc: local_ctx)
                (e: expr)
                (fuel: nat)
+{struct fuel}
 : expr_eval_result
 := match fuel with
    | O => ExprEvalAbort glob loc yc_out_of_gas
@@ -325,6 +329,7 @@ with eval_args {C: yul_config} {D: dynamic_eval_config}
        (loc: local_ctx)
        (args: list expr)
        (fuel: nat)
+{struct fuel}
 : expr_eval_result
 := match fuel with
    | O => ExprEvalAbort glob loc yc_out_of_gas
@@ -350,6 +355,7 @@ with eval_switch {C: yul_config} {D: dynamic_eval_config}
                  (cases: list case)
                  (default: option block)
                  (fuel: nat)
+{struct fuel}
 : stmt_eval_result
 := match fuel with
    | O => StmtEvalResult glob loc (ModeAbort yc_out_of_gas)
@@ -375,6 +381,7 @@ with eval_loop {C: yul_config} {D: dynamic_eval_config}
                (after: block)
                (body: block)
                (fuel: nat)
+{struct fuel}
 : stmt_eval_result
 := match fuel with
    | O => StmtEvalResult glob loc (ModeAbort yc_out_of_gas)
